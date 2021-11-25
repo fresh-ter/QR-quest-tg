@@ -2,7 +2,8 @@ import re
 
 
 class Task:
-	def parse(message):
+	def getTaskFromStart(start_message_argument):
+		message = start_message_argument
 		print("Parsing start message: ", message)
 
 		# task_1
