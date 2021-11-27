@@ -26,14 +26,15 @@ class UsersDB:
 					'fname TEXT,' + \
 					'lname TEXT,' + \
 					'name TEXT,' + \
-					'score INT,' + \
-					'second_score INT,' + \
-					'status INT,' + \
+					'score INT NOT NULL,' + \
+					'second_score INT NOT NULL,' + \
+					'status INT NOT NULL,' + \
 					'taskid_in_progress INT' + \
 					')'
 
 		cursor = self.conn.cursor()
 		cursor.execute(request)
+		self.commit()
 
 	def getLastID(self):
 		request = 'SELECT max(id) FROM ' + self.mainTableName
@@ -51,19 +52,25 @@ class UsersDB:
 		self.connect()
 		self.createTable()
 
-	def addNewUser(self, tg_id, name):
+	def addNewUser(self, tg_id, tg_name=None, tg_nickname=None):
 		tg_id = str(tg_id)
 		name = str(name)
+		tg_name = str(tg_name)
+		tg_nickname = str(tg_nickname)
 
 		ID = self.getLastID() + 1
 
-		data = (ID, tg_id, name)
+		data = (ID, tg_id, tg_name, tg_nickname, 0, 0, 10)
+
 
 		request = 'INSERT INTO ' +  self.mainTableName + \
-					'(id, tg_id, name)' + \
-					'VALUES(?, ?, ?)'
+					'(id, tg_id, tg_name, tg_nickname, score, second_score, status)' + \
+					'VALUES(?, ?, ?, ?, ?, ?, ?)'
 
 		cursor = self.conn.cursor()
 		cursor.execute(request, data)
 		self.commit()
+
+	def isIdExists(self, ID):
+		pass
 
