@@ -130,3 +130,6 @@ dmypy.json
 
 # Bot Settings
 tgbotSettings.py
+
+# Bot database files
+*.sqlite3
