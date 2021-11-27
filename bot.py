@@ -19,7 +19,7 @@ def start_command(self):
 			arg = str(command_args[1])
 
 			if arg[:4] == "task":
-				Task.getTaskFromStart(start_message_argument=arg)
+				Task.getTaskNumberFromStart(start_message_argument=arg)
 
 
 def empty(data):

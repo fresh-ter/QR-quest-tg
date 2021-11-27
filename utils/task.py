@@ -2,7 +2,7 @@ import re
 
 
 class Task:
-	def getTaskFromStart(start_message_argument):
+	def getTaskNumberFromStart(start_message_argument):
 		message = start_message_argument
 		print("Parsing start message: ", message)
 
