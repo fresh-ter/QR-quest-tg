@@ -71,28 +71,6 @@ class UsersDB:
 
 		return lastID
 
-	def start(self):
-		self.connect()
-		self.createTable()
-
-	def addNewUser(self, tg_id, tg_name=None, tg_nickname=None):
-		tg_id = str(tg_id)
-		tg_name = str(tg_name)
-		tg_nickname = str(tg_nickname)
-
-		ID = self.getLastID() + 1
-
-		data = (ID, tg_id, tg_name, tg_nickname, 0, 0, 10)
-
-
-		request = 'INSERT INTO ' +  self.mainTableName + \
-					'(id, tg_id, tg_name, tg_nickname, score, second_score, status)' + \
-					'VALUES(?, ?, ?, ?, ?, ?, ?)'
-
-		cursor = self.conn.cursor()
-		cursor.execute(request, data)
-		self.commit()
-
 	def isExistsTgID(self):
 		pass
 
@@ -122,3 +100,27 @@ class UsersDB:
 
 		return self.getUsersBy(request, (tg_id,))[0]
 
+	def start(self):
+		self.connect()
+		self.createTable()
+
+	def createAndAddNewUser(self, tg_id, tg_name=None, tg_nickname=None):
+		tg_id = str(tg_id)
+		tg_name = str(tg_name)
+		tg_nickname = str(tg_nickname)
+
+		ID = self.getLastID() + 1
+
+		data = (ID, tg_id, tg_name, tg_nickname, 0, 0, 10)
+
+
+		request = 'INSERT INTO ' +  self.mainTableName + \
+					'(id, tg_id, tg_name, tg_nickname, score, second_score, status)' + \
+					'VALUES(?, ?, ?, ?, ?, ?, ?)'
+
+		cursor = self.conn.cursor()
+		cursor.execute(request, data)
+		self.commit()
+
+		user = self.getUserById(ID)
+		return user
