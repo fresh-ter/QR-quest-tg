@@ -19,8 +19,8 @@ class UsersDB:
 
 	def createTable(self):
 		request = 'CREATE TABLE IF NOT EXISTS ' + self.mainTableName + '(' + \
-					'id INT PRIMARY KEY,' + \
-					'tg_id TEXT PRIMARY KEY,' + \
+					'id INT NOT NULL PRIMARY KEY,' + \
+					'tg_id TEXT UNIQUE,' + \
 					'tg_name TEXT,' + \
 					'tg_nickname TEXT,' + \
 					'fname TEXT,' + \
