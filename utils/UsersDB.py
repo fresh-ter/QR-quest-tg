@@ -1,4 +1,27 @@
 import sqlite3
+from .User import User
+
+
+def createUserFromResponse(response):
+	user = User(response[1])
+	user.ID = response[0]
+
+	user.tg_name = response[2]
+	user.tg_nickname = response[3]
+
+	user.fname = response[4]
+	user.lname = response[5]
+	user.name = response[6]
+
+	user.score = response[7]
+	user.second_score = response[8]
+
+	user.status = response[9]
+
+	user.taskid_in_progress = response[10]
+
+	return user
+
 
 class UsersDB:
 	"""docstring for Users"""
@@ -54,7 +77,6 @@ class UsersDB:
 
 	def addNewUser(self, tg_id, tg_name=None, tg_nickname=None):
 		tg_id = str(tg_id)
-		name = str(name)
 		tg_name = str(tg_name)
 		tg_nickname = str(tg_nickname)
 
@@ -71,6 +93,32 @@ class UsersDB:
 		cursor.execute(request, data)
 		self.commit()
 
-	def isIdExists(self, ID):
+	def isExistsTgID(self):
 		pass
+
+	def getUsersBy(self, request, value):
+		cursor = self.conn.cursor()
+		cursor.execute(request, value)
+		response = cursor.fetchall()
+
+		# print(response)
+
+		if len(response) == 0:
+			return [None]
+		else:
+			users = []
+			for userTuple in response:
+				users.append(createUserFromResponse(userTuple))
+
+			return users
+
+	def getUserById(self, ID):
+		request = 'SELECT * FROM ' + self.mainTableName + ' WHERE id = ?'
+
+		return self.getUsersBy(request, (ID,))[0]
+
+	def getUserByTgId(self, tg_id):
+		request = 'SELECT * FROM ' + self.mainTableName + ' WHERE tg_id = ?'
+
+		return self.getUsersBy(request, (tg_id,))[0]
 
