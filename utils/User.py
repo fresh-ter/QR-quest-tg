@@ -25,7 +25,7 @@ class User:
 
 		d['tg_id'] = self.tg_id
 		d['tg_name'] = self.tg_name
-		d['tg_nicknamen'] = self.tg_nickname
+		d['tg_nickname'] = self.tg_nickname
 
 		d['fname'] = self.fname
 		d['lname'] = self.lname
