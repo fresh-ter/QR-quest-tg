@@ -1,3 +1,12 @@
+class UserStatuses:
+	READY = 10
+	SENDS = 20
+	SENDS_NAME = 21
+	SENDS_FNAME = 22
+	SENDS_LNAME = 23
+	SENDS_ANSWER = 24
+
+
 class User:
 	"""docstring for User"""
 	def __init__(self, tg_id, ID=None, status=10, taskid_in_progress=None):
