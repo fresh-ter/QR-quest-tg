@@ -33,7 +33,7 @@ def main():
 
 	# usersDB._updateValue(4, 'score', '50')
 
-	# run_bot(usersDB)
+	run_bot(usersDB)
 
 
 if __name__ == '__main__':
