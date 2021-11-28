@@ -6,9 +6,9 @@ from time import sleep
 from utils.task import Task
 from utils import UserStatuses, interlocutor
 
-parcipantList = ["some_id"]
+# parcipantList = ["some_id"]
 
-p = Penger(token = tS.token, senderWhitelist=parcipantList)
+p = Penger(token = tS.token)
 usersDB = None
 taskDB = None
 
@@ -41,7 +41,7 @@ def registerNewUser(tg_id):
 	user.changeStatus(UserStatuses.SENDS_NAME)
 	usersDB.updateUser(user)
 
-	p.senderWhitelist.append(tg_id)
+	# p.senderWhitelist.append(tg_id)
 
 
 def registrationClosed(tg_id):
@@ -81,9 +81,18 @@ def help_command(self):
 	p.sendMessageToChat(self.data, "This is help")
 
 
+def score_for_parcipant(user):
+	p.sendMessage(user.tg_id, "This is score")
+
+
 def score_command(self):
-	print(p.senderWhitelist)
-	p.sendMessageToChat(self.data, "This is score")
+	tg_id = self.data["sender_id"]
+	user = usersDB.getUserByTgId(tg_id)
+
+	if user is not None:
+		score_for_parcipant(user)
+	else:
+		p.sendMessageToChat(self.data, 'I do not understand...')
 
 
 def empty_for_parcipant(user, message):
@@ -117,7 +126,7 @@ def empty(self):
 p.accordance = [
 	Accordance('/start', start_command, 'all:all', enableArgument=True),
 	Accordance('/help', help_command, 'all:all', enableArgument=True),
-	Accordance('/score', score_command, 'gWhitelist:all', enableArgument=True)
+	Accordance('/score', score_command, 'all:all', enableArgument=True)
 ]
 p.emptyAccordance = Accordance('', empty, 'all:all', enableArgument=True)
 
