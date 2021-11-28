@@ -1,6 +1,7 @@
 import re
+from .User import UserStatuses
 
-maxLengthOfName = 16
+maxLengthOfName = 32
 
 langs = ('rus')
 
@@ -21,7 +22,21 @@ registration = {
 	"happy_reg_bonus_1": [
 		"Еее))\n\nУзнать сумму своих баллов можно следующими способами:\n > командой /score\n> кнопкой 'Мои баллы'\n> напечатай мне букву 'Я'"
 	]
+}
 
+others = {
+	"ready": [
+		"Хмм.. Это мне пока трудно понять. Может быть когда-нибудь я научусь общаться не по программе..." + \
+		"\n\n В любом случае команда /help может тебе помочь))"
+	],
+	"sends_name": [
+		"Принято! Теперь я знаю как к тебе обращаться.\n\n" + \
+		"Меня можешь звать просто - Собеседник.\n" + \
+		"Или - Бот.\n" + \
+		"Или все таки Собеседник??\n\n" + \
+		"Хмм, не знаю... У меня одновременно и много имен, и имени нет.\n" + \
+		"Так и существую ;-)"
+	]
 }
 
 errors = {
@@ -29,6 +44,8 @@ errors = {
 }
 
 
-def enter_name(text):
-	text = text[:maxLengthOfName]
-	return
+def get_validated_name(text):
+	if len(text) > maxLengthOfName: 
+		return text[:maxLengthOfName]
+	else:
+		return text
