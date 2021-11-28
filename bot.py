@@ -1,14 +1,29 @@
 from Penger.penger import Penger, Accordance
 import tgbotSettings as tS
+
 from time import sleep
 
 from utils.task import Task
-from utils import UsersDB, User, UserStatuses, interlocutor
+from utils import UserStatuses, interlocutor
 
+parcipantList = ["some_id"]
 
-p = Penger(token = tS.token)
+p = Penger(token = tS.token, senderWhitelist=parcipantList)
 usersDB = None
 taskDB = None
+
+
+def isParcipant(tg_id):
+	user = usersDB.getUserByTgId(tg_id)
+
+	if user is None:
+		return False
+	else:
+		return True
+
+
+def isRegistrationEnabled():
+	return True
 
 
 def registerNewUser(tg_id):
@@ -24,20 +39,34 @@ def registerNewUser(tg_id):
 	p.sendMessage(tg_id, interlocutor.registration['enter_name'][0])
 	sleep(0.1)
 	user.changeStatus(UserStatuses.SENDS_NAME)
-	
+	usersDB.updateUser(user)
+
+	p.senderWhitelist.append(tg_id)
+
+
+def registrationClosed(tg_id):
+	p.sendMessage(tg_id, "Hello!")
+
+
+def start_for_parcipant(tg_id):
+	user = usersDB.getUserByTgId(tg_id)
+	p.sendMessage(user.tg_id, "Hello, "+user.getName()+"!")
 
 
 def start_command(self):
+	tg_id = self.data["sender_id"]
 	print(self.data)
 
 	if self.data['text'] == "/start":
 		tg_id = self.data["sender_id"]
-		user = usersDB.getUserByTgId(tg_id)
 
-		if user is None:
-			registerNewUser(tg_id)
+		if not isParcipant(tg_id):
+			if isRegistrationEnabled():
+				registerNewUser(tg_id)
+			else:
+				registrationClosed(tg_id)
 		else:
-			p.sendMessage(tg_id, "Hello")
+			start_for_parcipant(tg_id)
 		
 	else:
 		command_args = self.data['text'].split()
@@ -48,14 +77,49 @@ def start_command(self):
 				Task.getTaskNumberFromStart(start_message_argument=arg)
 
 
-def empty(data):
-	p.sendMessageToChat(data, 'I do not understand...')
+def help_command(self):
+	p.sendMessageToChat(self.data, "This is help")
+
+
+def score_command(self):
+	print(p.senderWhitelist)
+	p.sendMessageToChat(self.data, "This is score")
+
+
+def empty_for_parcipant(user, message):
+	print(message)
+	userStatus = user.getStatus()
+
+	answer = "Status error.\nWrite to tech support - it's interesting."
+
+	if userStatus == UserStatuses.READY:
+		answer = interlocutor.others["ready"][0]
+	elif userStatus == UserStatuses.SENDS_NAME:
+		user.changeName(interlocutor.get_validated_name(message))
+		user.changeStatus(UserStatuses.READY)
+		usersDB.updateUser(user)
+		answer = interlocutor.others["sends_name"][0]
+
+	p.sendMessage(user.tg_id, answer)
+		
+
+
+def empty(self):
+	tg_id = self.data["sender_id"]
+	user = usersDB.getUserByTgId(tg_id)
+
+	if user is not None:
+		empty_for_parcipant(user, self.data["text"])
+	else:
+		p.sendMessageToChat(self.data, 'I do not understand...')
 
 
 p.accordance = [
 	Accordance('/start', start_command, 'all:all', enableArgument=True),
+	Accordance('/help', help_command, 'all:all', enableArgument=True),
+	Accordance('/score', score_command, 'gWhitelist:all', enableArgument=True)
 ]
-p.emptyAccordance = empty
+p.emptyAccordance = Accordance('', empty, 'all:all', enableArgument=True)
 
 
 def main(u):
