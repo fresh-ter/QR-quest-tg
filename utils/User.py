@@ -63,8 +63,14 @@ class User:
 		else:
 			self.second_score += points
 
-	def changeName(self, name):
-		self.name = name
+	def getName(self):
+		return str(self.name)
 
+	def changeName(self, name):
+		self.name = str(name)
+
+	def getStatus(self):
+		return self.status
+	
 	def changeStatus(self, status):
 		self.status = status
