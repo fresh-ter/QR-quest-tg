@@ -3,7 +3,7 @@ import tgbotSettings as tS
 from time import sleep
 
 from utils.task import Task
-from utils import UsersDB, User, interlocutor
+from utils import UsersDB, User, UserStatuses, interlocutor
 
 
 p = Penger(token = tS.token)
@@ -23,6 +23,7 @@ def registerNewUser(tg_id):
 
 	p.sendMessage(tg_id, interlocutor.registration['enter_name'][0])
 	sleep(0.1)
+	user.changeStatus(UserStatuses.SENDS_NAME)
 	
 
 
