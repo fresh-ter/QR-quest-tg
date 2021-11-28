@@ -71,8 +71,17 @@ class UsersDB:
 
 		return lastID
 
-	def isExistsTgID(self):
-		pass
+	def isExistsID(self, ID):
+		request = 'SELECT id FROM ' + self.mainTableName + ' WHERE id = ?'
+
+		cursor = self.conn.cursor()
+		cursor.execute(request, (ID,))
+		response = cursor.fetchone()
+
+		if response is None:
+			return False
+		elif response[0] == ID:
+			return True
 
 	def getUsersBy(self, request, value):
 		cursor = self.conn.cursor()
@@ -124,3 +133,55 @@ class UsersDB:
 
 		user = self.getUserById(ID)
 		return user
+
+	def _updateValue(self, ID, _valueName, newValue):
+		request = 'UPDATE ' + self.mainTableName + ' SET ' + _valueName + ' = ?' + \
+					' WHERE id = ?'
+
+		cursor = self.conn.cursor()
+		cursor.execute(request, (newValue, ID))
+		self.commit()
+
+	def updateUser(self, user):
+		userID = user.getID()
+		existingUser = self.getUserById(userID)
+
+		if existingUser is None:
+			return False
+
+		if existingUser.tg_name != user.tg_name:
+			self._updateValue(userID, 'tg_name', user.tg_name)
+
+		if existingUser.tg_nickname != user.tg_nickname:
+			self._updateValue(userID, 'tg_nickname', user.tg_nickname)
+
+		if existingUser.fname != user.fname:
+			self._updateValue(userID, 'fname', user.fname)
+
+		if existingUser.lname != user.lname:
+			self._updateValue(userID, 'lname', user.lname)
+
+		if existingUser.name != user.name:
+			self._updateValue(userID, 'name', user.name)
+
+		if existingUser.score != user.score:
+			self._updateValue(userID, 'score', user.score)
+
+		if existingUser.second_score != user.second_score:
+			self._updateValue(userID, 'second_score', user.second_score)
+
+		if existingUser.status != user.status:
+			self._updateValue(userID, 'status', user.status)
+
+		if existingUser.taskid_in_progress != user.taskid_in_progress:
+			self._updateValue(userID, 'taskid_in_progress', user.taskid_in_progress)
+
+	def updateUserStatus(self, user):
+		userID = user.getID()
+		existingUser = self.getUserById(userID)
+
+		if existingUser is None:
+			return False
+
+		if existingUser.status != user.status:
+			self._updateValue(userID, 'status', user.status)

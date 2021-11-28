@@ -18,6 +18,9 @@ class User:
 
 		self.taskid_in_progress = taskid_in_progress
 
+	def getID(self):
+		return self.ID
+
 	def dumpToDict(self):
 		d = {}
 
@@ -40,3 +43,19 @@ class User:
 
 		return d
 
+	def addPoints(self, points, toMain=True):
+		# if str(points).isdigit():
+		# 	points = int(points)
+		# else:
+		# 	return
+
+		if toMain:
+			self.score += points
+		else:
+			self.second_score += points
+
+	def changeName(self, name):
+		self.name = name
+
+	def changeStatus(self, status):
+		self.status = status
