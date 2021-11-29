@@ -77,8 +77,18 @@ def start_command(self):
 				Task.getTaskNumberFromStart(start_message_argument=arg)
 
 
+def help_for_parcipant(user):
+	p.sendMessage(user.tg_id, interlocutor.help_text[0])
+
+
 def help_command(self):
-	p.sendMessageToChat(self.data, "This is help")
+	tg_id = self.data["sender_id"]
+	user = usersDB.getUserByTgId(tg_id)
+
+	if user is not None:
+		help_for_parcipant(user)
+	else:
+		p.sendMessageToChat(self.data, "This is help")
 
 
 def score_for_parcipant(user):
