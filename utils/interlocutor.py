@@ -2,6 +2,7 @@ import re
 from .User import UserStatuses
 
 maxLengthOfName = 32
+maxLengthOfAnswer = 32
 
 langs = ('rus')
 

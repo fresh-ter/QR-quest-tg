@@ -1,9 +1,22 @@
 import sqlite3
 from .Task import Task
 
+from json import dumps, loads
+
 
 def createTaskFromResponse(response):
-	pass
+	task = Task(response[1], response[2], response[3])
+
+	task.ID = response[0]
+
+	task.current_coast = response[4]
+	task.features = response[5]
+	task.max_coast = response[6]
+	task.min_coast = response[7]
+	task.id_solved = response[8]
+	task.id_unsolved = response[9]
+
+	return task
 
 
 class TasksDB:
@@ -66,6 +79,75 @@ class TasksDB:
 			return False
 		elif response[0] == ID:
 			return True
+
+	def getTaskById(self, ID):
+		request = 'SELECT * FROM ' + self.mainTableName + ' WHERE id = ?'
+
+		cursor = self.conn.cursor()
+		cursor.execute(request, (ID,))
+		response = cursor.fetchall()
+
+		print(response)
+
+		if len(response) == 0:
+			return None
+		else:
+			tasks = []
+			for taskTuple in response:
+				tasks.append(createTaskFromResponse(taskTuple))
+			return tasks[0]
+
+	def createAndAddNewTask(self, task, answer, coast,
+			current_coast=None, features=None, max_coast=None, min_coast=None,
+			id_solved=None, id_unsolved=None):
+		task = str(task)
+		answer = str(answer)
+		coast = int(coast)
+
+		if current_coast is None:
+			current_coast = coast
+		else:
+			current_coast = int(current_coast)
+
+		if features is None:
+			features = "plain"
+		else:
+			features = str(features)
+
+		if max_coast is None:
+			max_coast = coast
+		else:
+			max_coast = int(max_coast)
+
+		if min_coast is None:
+			min_coast = coast
+		else:
+			min_coast = int(min_coast)
+
+		if id_solved is None:
+			id_solved = []
+
+		if id_unsolved is None:
+			id_unsolved = []
+
+
+		ID = self.getLastID() + 1
+
+		data = (ID, task, answer, coast, current_coast, features, max_coast,
+			min_coast, dumps(id_solved), dumps(id_unsolved))
+
+
+		request = 'INSERT INTO ' +  self.mainTableName + \
+					'(id, task, answer, coast, current_coast, features,' + \
+					'max_coast, min_coast, id_solved, id_unsolved)' + \
+					'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+
+		cursor = self.conn.cursor()
+		cursor.execute(request, data)
+		self.commit()
+
+		task = self.getTaskById(ID)
+		return task
 
 	def function(self):
 		pass

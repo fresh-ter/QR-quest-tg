@@ -132,7 +132,7 @@ class UsersDB:
 		self.commit()
 
 		user = self.getUserById(ID)
-		return user
+		return user[0]
 
 	def _updateValue(self, ID, _valueName, newValue):
 		request = 'UPDATE ' + self.mainTableName + ' SET ' + _valueName + ' = ?' + \

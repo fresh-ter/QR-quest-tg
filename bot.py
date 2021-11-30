@@ -3,8 +3,8 @@ import tgbotSettings as tS
 
 from time import sleep
 
-from utils.task import Task
 from utils import UserStatuses, interlocutor
+from utils import Task
 
 # parcipantList = ["some_id"]
 
