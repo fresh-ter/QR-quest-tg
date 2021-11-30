@@ -22,6 +22,10 @@ def isParcipant(tg_id):
 		return True
 
 
+def getUser(tg_id):
+	return usersDB.getUserByTgId(tg_id)
+
+
 def isRegistrationEnabled():
 	return True
 
@@ -55,26 +59,27 @@ def start_for_parcipant(tg_id):
 
 def start_command(self):
 	tg_id = self.data["sender_id"]
+	user = getUser(tg_id)
 	print(self.data)
 
-	if self.data['text'] == "/start":
+	command_arr = self.data['text'].split()
+
+	if len(command_arr) == 1:
 		tg_id = self.data["sender_id"]
 
-		if not isParcipant(tg_id):
+		if user is None:
 			if isRegistrationEnabled():
 				registerNewUser(tg_id)
 			else:
 				registrationClosed(tg_id)
 		else:
 			start_for_parcipant(tg_id)
-		
 	else:
-		command_args = self.data['text'].split()
-		if len(command_args) > 1:
-			arg = str(command_args[1])
-
-			if arg[:4] == "task":
-				Task.getTaskNumberFromStart(start_message_argument=arg)
+		if command_arr[1][:4] == "task" and user is not None:
+			p.sendMessage(tg_id, 'This is task')
+			Task.getTaskNumberFromStart(start_message_argument=command_arr[1])
+		else:
+			p.sendMessage(tg_id, 'I do not understand...')
 
 
 def help_for_parcipant(user):
