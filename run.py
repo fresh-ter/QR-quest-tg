@@ -6,14 +6,21 @@ def run_bot(usersDB):
 	bot.main(usersDB)
 
 
+def create_test_users(usersDB):
+	usersDB.createAndAddNewUser('123', 'qwerty')
+	usersDB.createAndAddNewUser('124')
+	usersDB.createAndAddNewUser('125', 'test')
+	usersDB.createAndAddNewUser('126', 'Steve')
+
+
 def main():
 	usersDB = UsersDB()
 	usersDB.start()
 
+	# create_test_users(usersDB)
+
 	a = usersDB.getLastID()
 	print(a)
-
-	#usersDB.addNewUser('12345', 'qwerty')
 
 	a = usersDB.getUserByTgId("123")
 
