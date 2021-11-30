@@ -43,9 +43,7 @@ class TasksDB:
 			'current_coast INT NOT NULL,' + \
 			'features TEXT NOT NULL,' + \
 			'max_coast INT NOT NULL,' + \
-			'min_coast INT NOT NULL,' + \
-			'id_solved TEXT NOT NULL,' + \
-			'id_unsolved TEXT NOT NULL' + \
+			'min_coast INT NOT NULL' + \
 			')'
 
 		cursor = self.conn.cursor()
