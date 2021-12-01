@@ -55,6 +55,42 @@ help_text = [
 	"/task 123"
 ]
 
+task_presentation = {
+	"start": [
+		"Таск №"
+	],
+	"start_1": [
+		"\n\n\n"
+	],
+	"answer_start": [
+		"\nОтправь "
+	],
+	"answer_plain_abc": [
+		"слово.\n"
+	],
+	"answer_send": [
+		"Чтобы ответить, отправь его мне"
+	],
+	"answer_stop": [
+		'\n\n! Отправь слово "стоп", чтобы выйти из режима ответа'
+	]
+}
+
+task_answer = {
+	"start": [
+		"Я проверил твой ответ на таск №"
+	],
+	"ok": [
+		"Отлично!\nТвой ответ сошелся с моими ожиданиями XD"
+	],
+	"not_ok": [
+		"Увы...\n Здесь ты допустил ошибку :("
+	],
+	"points": [
+		"\n\nЗа этот ответ я тебе начисляю столько баллов:\n>      "
+	]
+}
+
 others = {
 	"ready": [
 		"Хмм.. Это мне пока трудно понять. Может быть когда-нибудь я научусь общаться не по программе..." + \
@@ -67,6 +103,9 @@ others = {
 		"Или все таки Собеседник??\n\n" + \
 		"Хмм, не знаю... У меня одновременно и много имен, и имени нет.\n" + \
 		"Так и существую ;-)"
+	],
+	"answer_stop": [
+		"Ок.\nНе волнуйся, ты сможешь снова вызвать этот таск и ответить на него тогда, когда тебе будет удобно."
 	]
 }
 
@@ -80,3 +119,21 @@ def get_validated_name(text):
 		return text[:maxLengthOfName]
 	else:
 		return text
+
+
+def get_validated_answer(text):
+	if len(text) > maxLengthOfAnswer: 
+		return text[:maxLengthOfAnswer]
+	else:
+		return text
+
+
+def getTaskIDFromStart(start_message_argument):
+		response = None
+
+		if re.match("^task_\\d{,4}$", start_message_argument):
+			task_number = start_message_argument[5:]
+			if task_number.isdigit():
+				response = int(task_number)
+
+		return response

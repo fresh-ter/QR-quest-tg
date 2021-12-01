@@ -1,22 +1,9 @@
-import re
-
-
-def getTaskNumberFromStart(start_message_argument):
-		message = start_message_argument
-		print("Parsing start message: ", message)
-
-		if re.match("^task_\\d{,3}$", message):
-			task_number = message[5:]
-			if task_number.isdigit():
-				task_number = int(task_number)
-				print("Task number: ", task_number)
-
+from .interlocutor import task_presentation
 
 class Task:
 	"""docstring for Task"""
 	def __init__(self, task, answer, coast, ID=None, current_coast=None,
-			features=None, max_coast=None, min_coast=None, id_solved=None,
-			id_unsolved=None):
+			features=None, max_coast=None, min_coast=None):
 		self.ID = ID
 
 		self.task = task
@@ -42,12 +29,6 @@ class Task:
 			min_coast = coast
 		else:
 			min_coast = int(min_coast)
-
-		if id_solved is None:
-			id_solved = []
-
-		if id_unsolved is None:
-			id_unsolved = []
 
 	def dumpToDict(self):
 		d = {}
@@ -76,12 +57,6 @@ class Task:
 	def getCurrentCoast(self):
 		return self.current_coast
 
-	def addIDSolved(self, ID):
-		self.id_solved.append(ID)
-
-	def addIDUnsolved(self, ID):
-		self.id_unsolved.append(ID)
-
 	def isCorrectAnswer(self, _answer):
 		_answer = str(_answer)
 
@@ -93,11 +68,28 @@ class Task:
 
 		return response
 
+	def getTaskAsMessage(self, lang=0):
+		message = task_presentation['start'][lang]
+		message += str(self.ID) + task_presentation['start_1'][lang]
 
-	def processAnswer(self, answer):
-		isCorrectAnswer = self.isCorrectAnswer(answer)
+		message += '> '
+		message += self.task
+		message += '\n\n'
 
-		print("Answer: ", answer, "  Correct: ", isCorrectAnswer)
+		# if "plain" in self.features:
+		# 	message += task_presentation["answer_plain_abc"][lang]
 
-		return isCorrectAnswer
+		message += task_presentation["answer_stop"][lang]
+
+		return message
+
+	def processAnswer(self, _answer):
+		isCorrectAnswer = self.isCorrectAnswer(_answer)
+
+		points = self.getCurrentCoast
+
+
+		print("Answer: ", _answer, "  Correct: ", isCorrectAnswer)
+
+		return isCorrectAnswer, points
 
