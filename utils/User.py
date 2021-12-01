@@ -74,3 +74,9 @@ class User:
 	
 	def changeStatus(self, status):
 		self.status = status
+
+	def getTaskID(self):
+		return self.taskid_in_progress
+
+	def changeTaskID(self, task_id):
+		self.taskid_in_progress = int(task_id)
