@@ -1,9 +1,9 @@
-from utils import UsersDB
+from utils import UsersDB, TasksDB, SolutionsDB
 import bot
 
 
-def run_bot(usersDB):
-	bot.main(usersDB)
+def run_bot(usersDB, tasksDB, solutionsDB):
+	bot.main(usersDB, tasksDB, solutionsDB)
 
 
 def create_test_users(usersDB):
@@ -12,12 +12,25 @@ def create_test_users(usersDB):
 	usersDB.createAndAddNewUser('125', 'test')
 	usersDB.createAndAddNewUser('126', 'Steve')
 
+def create_test_tasks(tasksDB):
+	tasksDB.createAndAddNewTask("What is it?", "Linux", 1000)
+	tasksDB.createAndAddNewTask("Who is it?", "Tux", 700)
+	tasksDB.createAndAddNewTask("Where is it?", "Antarctica", 750)
+	tasksDB.createAndAddNewTask("When is it?", "Now", 5000)
+
 
 def main():
 	usersDB = UsersDB()
 	usersDB.start()
 
+	tasksDB = TasksDB()
+	tasksDB.start()
+
+	solutionsDB = SolutionsDB()
+	solutionsDB.start()
+
 	# create_test_users(usersDB)
+	# create_test_tasks(tasksDB)
 
 	a = usersDB.getLastID()
 	print(a)
@@ -40,7 +53,7 @@ def main():
 
 	# usersDB._updateValue(4, 'score', '50')
 
-	run_bot(usersDB)
+	run_bot(usersDB, tasksDB, solutionsDB)
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@ from .User import UserStatuses
 
 maxLengthOfName = 32
 maxLengthOfAnswer = 32
+stop_word = "стоп"
 
 langs = ('rus')
 
@@ -87,7 +88,58 @@ task_answer = {
 		"Увы...\n Здесь ты допустил ошибку :("
 	],
 	"points": [
-		"\n\nЗа этот ответ я тебе начисляю столько баллов:\n>      "
+		"\n\nЗа этот ответ я тебе начисляю столько баллов:\n->      "
+	]
+}
+
+status = {
+	"ready": [
+		"Готов к решению тасков"
+	],
+	"sends_name": [
+		"Отправляет свое имя"
+	],
+	"sends_answer": [
+		"Отправляет ответ на таск №"
+	],
+	"sends_taskid": [
+		"Отправляет номер таска"
+	]
+}
+
+me_command = {
+	"start": [
+		"Информация о тебе:\n\n"
+	],
+	"name": [
+		"Для всех участников тебя зовут:\n-> "
+	],
+	"status": [
+		"\n\nТвой текущий статус:\n-> "
+	],
+	"score": [
+		"\n\nТвой текущий счет:\n-> "
+	],
+	"task": [
+		"\n\nТы ответил на тасков:\n-> "
+	],
+	"task_2": [
+		"\n\nИз них:"
+	],
+	"task_ok": [
+		"\nПравильно: "
+	],
+	"task_notok": [
+		"\nНеправильно: "
+	],
+	"rating": [
+		""
+	]
+}
+
+task_command = {
+	"enter": [
+		"Введи номер таска:"
 	]
 }
 
@@ -126,6 +178,16 @@ def get_validated_answer(text):
 		return text[:maxLengthOfAnswer]
 	else:
 		return text
+
+
+def getTaskIDFromText(text):
+	response = None
+	text = get_validated_answer(text)
+
+	if str(text).isdigit():
+		response = int(text)
+
+	return response
 
 
 def getTaskIDFromStart(start_message_argument):

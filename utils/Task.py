@@ -84,9 +84,11 @@ class Task:
 		return message
 
 	def processAnswer(self, _answer):
+		points = 0
 		isCorrectAnswer = self.isCorrectAnswer(_answer)
 
-		points = self.getCurrentCoast
+		if isCorrectAnswer:
+			points = self.getCurrentCoast()
 
 
 		print("Answer: ", _answer, "  Correct: ", isCorrectAnswer)

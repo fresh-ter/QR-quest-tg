@@ -5,6 +5,7 @@ class UserStatuses:
 	SENDS_FNAME = 22
 	SENDS_LNAME = 23
 	SENDS_ANSWER = 24
+	SENDS_TASKID = 25
 
 
 class User:
@@ -51,6 +52,9 @@ class User:
 		d['taskid_in_progress'] = self.taskid_in_progress
 
 		return d
+
+	def getScore(self):
+		return self.score
 
 	def addPoints(self, points, toMain=True):
 		# if str(points).isdigit():
