@@ -13,8 +13,6 @@ def createTaskFromResponse(response):
 	task.features = response[5]
 	task.max_coast = response[6]
 	task.min_coast = response[7]
-	task.id_solved = response[8]
-	task.id_unsolved = response[9]
 
 	return task
 
@@ -96,8 +94,7 @@ class TasksDB:
 			return tasks[0]
 
 	def createAndAddNewTask(self, task, answer, coast,
-			current_coast=None, features=None, max_coast=None, min_coast=None,
-			id_solved=None, id_unsolved=None):
+			current_coast=None, features=None, max_coast=None, min_coast=None):
 		task = str(task)
 		answer = str(answer)
 		coast = int(coast)
@@ -122,23 +119,16 @@ class TasksDB:
 		else:
 			min_coast = int(min_coast)
 
-		if id_solved is None:
-			id_solved = []
-
-		if id_unsolved is None:
-			id_unsolved = []
-
-
 		ID = self.getLastID() + 1
 
 		data = (ID, task, answer, coast, current_coast, features, max_coast,
-			min_coast, dumps(id_solved), dumps(id_unsolved))
+			min_coast)
 
 
 		request = 'INSERT INTO ' +  self.mainTableName + \
 					'(id, task, answer, coast, current_coast, features,' + \
-					'max_coast, min_coast, id_solved, id_unsolved)' + \
-					'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+					'max_coast, min_coast)' + \
+					'VALUES(?, ?, ?, ?, ?, ?, ?, ?)'
 
 		cursor = self.conn.cursor()
 		cursor.execute(request, data)
