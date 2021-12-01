@@ -1,4 +1,4 @@
-from utils import TasksDB
+from utils import TasksDB, SolutionsDB
 
 
 def main():
@@ -6,7 +6,11 @@ def main():
 	tasksDB.start()
 	tasksDB.createAndAddNewTask("What is it?", "Linux", 1000)
 
-	# a = tasksDB.getTaskById(2)
+	solutionsDB = SolutionsDB()
+	solutionsDB.start()
+	solutionsDB.createAndAddNewSolution(1, 4, 1, True)
+
+	a = tasksDB.getTaskById(2)
 	# print(a.dumpToDict())
 
 	# print()
@@ -17,7 +21,8 @@ def main():
 	# b = a.processAnswer('  lInUx  ')
 	# print(b)
 	# b = a.processAnswer('not linux')
-	# print(b)
+	b = a.getTaskAsMessage()
+	print(b)
 
 	# print()
 

@@ -78,7 +78,7 @@ class SolutionsDB:
 				solutions.append(createSolutionFromResponse(solutionTuple))
 			return solutions[0]
 
-	def createAndAddNewTask(self, user_id, task_id, score=0, is_solved=True):
+	def createAndAddNewSolution(self, user_id, task_id, score=0, is_solved=True):
 		user_id = int(user_id)
 		task_id = int(task_id)
 		score = int(score)
@@ -100,5 +100,5 @@ class SolutionsDB:
 		cursor.execute(request, data)
 		self.commit()
 
-		task = self.getTaskById(ID)
-		return task
+		solution = self.getSolutionById(ID)
+		return solution
