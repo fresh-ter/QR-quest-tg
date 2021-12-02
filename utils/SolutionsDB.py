@@ -102,3 +102,10 @@ class SolutionsDB:
 
 		solution = self.getSolutionById(ID)
 		return solution
+
+	def didUserAnswer(self, task, user):
+		response = False
+
+		
+
+		return response

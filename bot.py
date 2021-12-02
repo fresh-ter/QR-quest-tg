@@ -53,7 +53,12 @@ def getUserStatusAsMessage(user):
 
 
 def printTask(task, user):
-	message = task.getTaskAsMessage()
+	message = ""
+
+	if solutionsDB.didUserAnswer(task, user):
+		pass
+
+	message += task.getTaskAsMessage()
 
 	user.changeStatus(UserStatuses.SENDS_ANSWER)
 	user.changeTaskID(task.getID())
