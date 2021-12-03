@@ -64,7 +64,11 @@ def printTask(task, user):
 		user.changeTaskID(task.getID())
 		usersDB.updateUser(user)
 	else:
-		message += "You have already answered this task"
+		# message += "You have already answered this task"
+
+		message += interlocutor.task_presentation["already_answer"][0]
+		message += str(task.getID())
+		message += interlocutor.task_presentation["already_answer_1"][0]
 
 		user.changeStatus(UserStatuses.READY)
 		usersDB.updateUser(user)

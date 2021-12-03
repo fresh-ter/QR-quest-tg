@@ -119,7 +119,7 @@ class SolutionsDB:
 	def isThereSolution(self, user, task):
 		response = False
 
-		request = 'SELECT count(*) FROM solutions WHERE user_id=?'
+		request = 'SELECT count(*) FROM solutions WHERE user_id=? AND task_id=?'
 		numberOfSolutions = self.getNumberOfSolutionBy(request, (user.getID(), task.getID()))
 
 		print('user.getID(): ', user.getID())
