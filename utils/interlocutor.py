@@ -74,6 +74,9 @@ task_presentation = {
 	],
 	"answer_stop": [
 		'\n\n! Отправь слово "стоп", чтобы выйти из режима ответа'
+	],
+	"already_answer": [
+		""
 	]
 }
 

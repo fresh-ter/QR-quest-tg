@@ -61,22 +61,35 @@ class SolutionsDB:
 		elif response[0] == ID:
 			return True
 
-	def getSolutionById(self, ID):
-		request = 'SELECT * FROM ' + self.mainTableName + ' WHERE id = ?'
-
+	def getSolutionsBy(self, request, value):
 		cursor = self.conn.cursor()
-		cursor.execute(request, (ID,))
+		cursor.execute(request, value)
 		response = cursor.fetchall()
 
-		print(response)
+		# print(response)
 
 		if len(response) == 0:
-			return None
+			return [None]
 		else:
 			solutions = []
 			for solutionTuple in response:
 				solutions.append(createSolutionFromResponse(solutionTuple))
-			return solutions[0]
+
+			return solutions
+
+	def getSolutionById(self, ID):
+		request = 'SELECT * FROM ' + self.mainTableName + ' WHERE id = ?'
+
+		return self.getSolutionsBy(request, (ID,))[0]
+
+	def getNumberOfSolutionBy(self, request, value):
+		cursor = self.conn.cursor()
+		cursor.execute(request, value)
+		response = cursor.fetchone()
+
+		# print(response)
+
+		return response[0]
 
 	def createAndAddNewSolution(self, user_id, task_id, score=0, is_solved=True):
 		user_id = int(user_id)
@@ -103,9 +116,36 @@ class SolutionsDB:
 		solution = self.getSolutionById(ID)
 		return solution
 
-	def didUserAnswer(self, task, user):
+	def isThereSolution(self, user, task):
 		response = False
 
-		
+		request = 'SELECT count(*) FROM solutions WHERE user_id=?'
+		numberOfSolutions = self.getNumberOfSolutionBy(request, (user.getID(), task.getID()))
+
+		print('user.getID(): ', user.getID())
+		print('task.getID(): ', task.getID())
+
+		print('numberOfSolutions: ', numberOfSolutions)
+
+		if numberOfSolutions > 0:
+			response = True
 
 		return response
+
+	def getNumberOfSolutionByUser(self, user):
+		request = 'SELECT count(*) FROM solutions WHERE user_id=?'
+		numberOfSolutions = self.getNumberOfSolutionBy(request, (user.getID(),))
+
+		return numberOfSolutions
+
+	def getNumberOfSolvedSolutionByUser(self, user):
+		request = 'SELECT count(*) FROM solutions WHERE user_id=? AND is_solved=1'
+		numberOfSolutions = self.getNumberOfSolutionBy(request, (user.getID(),))
+
+		return numberOfSolutions
+
+	def getNumberOfUnsolvedSolutionByUser(self, user):
+		request = 'SELECT count(*) FROM solutions WHERE user_id=? AND is_solved=0'
+		numberOfSolutions = self.getNumberOfSolutionBy(request, (user.getID(),))
+
+		return numberOfSolutions

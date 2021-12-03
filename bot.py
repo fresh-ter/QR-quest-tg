@@ -55,14 +55,19 @@ def getUserStatusAsMessage(user):
 def printTask(task, user):
 	message = ""
 
-	if solutionsDB.didUserAnswer(task, user):
-		pass
+	# print('solutions', solutionsDB.isThereSolution(user, task))
 
-	message += task.getTaskAsMessage()
+	if not solutionsDB.isThereSolution(user, task):
+		message += task.getTaskAsMessage()
 
-	user.changeStatus(UserStatuses.SENDS_ANSWER)
-	user.changeTaskID(task.getID())
-	usersDB.updateUser(user)
+		user.changeStatus(UserStatuses.SENDS_ANSWER)
+		user.changeTaskID(task.getID())
+		usersDB.updateUser(user)
+	else:
+		message += "You have already answered this task"
+
+		user.changeStatus(UserStatuses.READY)
+		usersDB.updateUser(user)
 
 	return message
 
@@ -239,15 +244,15 @@ def mecommand_for_parcipant(user):
 	message += score_for_parcipant(user)
 
 	message += interlocutor.me_command['task'][0]
-	message += '-'
+	message += str(solutionsDB.getNumberOfSolutionByUser(user))
 
 	message += interlocutor.me_command['task_2'][0]
 
 	message += interlocutor.me_command['task_ok'][0]
-	message += '-'
+	message += str(solutionsDB.getNumberOfSolvedSolutionByUser(user))
 
 	message += interlocutor.me_command['task_notok'][0]
-	message += '-'
+	message += str(solutionsDB.getNumberOfUnsolvedSolutionByUser(user))
 
 	return message
 
