@@ -83,13 +83,17 @@ class Task:
 
 		return message
 
+	def updateCurrentCoast(self):
+		if (self.current_coast - 10) >= self.min_coast:
+			self.current_coast = self.current_coast-10
+
 	def processAnswer(self, _answer):
 		points = 0
 		isCorrectAnswer = self.isCorrectAnswer(_answer)
 
 		if isCorrectAnswer:
 			points = self.getCurrentCoast()
-
+			self.updateCurrentCoast()
 
 		print("Answer: ", _answer, "  Correct: ", isCorrectAnswer)
 

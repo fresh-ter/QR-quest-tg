@@ -146,3 +146,11 @@ class TasksDB:
 
 		return response[0]
 
+	def updateCurrentCoastForTask(self, task):
+		request = 'UPDATE ' + self.mainTableName + ' SET current_coast = ?' + \
+					' WHERE id = ?'
+
+		cursor = self.conn.cursor()
+		cursor.execute(request, (task.getCurrentCoast(), task.getID()))
+		self.commit()
+

@@ -94,6 +94,7 @@ def processUserAnswer(vAnswer, user):
 		message = "This task no longer exists :-("
 	else:
 		isCorrect, points = task.processAnswer(vAnswer)
+		tasksDB.updateCurrentCoastForTask(task)
 
 		user.addPoints(points)
 		user.changeStatus(UserStatuses.READY)

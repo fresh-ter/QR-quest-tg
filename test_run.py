@@ -50,8 +50,8 @@ def main():
 
 	# usersDB._updateValue(4, 'score', '50')
 
-	a = tasksDB.getTaskById(4)
-	u = usersDB.getUserById(6)
+	# a = tasksDB.getTaskById(4)
+	# u = usersDB.getUserById(6)
 	# print(a.dumpToDict())
 
 	# print()
@@ -62,15 +62,28 @@ def main():
 	# b = a.processAnswer('  lInUx  ')
 	# print(b)
 	# b = a.processAnswer('not linux')
-	b = a.getTaskAsMessage()
-	print(b)
-	print("---------------")
+	# b = a.getTaskAsMessage()
+	# print(b)
+	# print("---------------")
 
-	a = solutionsDB.didUserAnswer(u, a)
+	# a = solutionsDB.didUserAnswer(u, a)
 
-	print(a)
+	# print(a)
 
 	# print(a.dumpToDict())
+
+	t = tasksDB.getTaskById(4)
+	print(t.getCurrentCoast())
+	t.min_coast = 960
+	t.updateCurrentCoast()
+	t.updateCurrentCoast()
+	t.updateCurrentCoast()
+	t.updateCurrentCoast()
+	t.updateCurrentCoast()
+	t.updateCurrentCoast()
+	t.updateCurrentCoast()
+	print(t.getCurrentCoast())
+	# tasksDB.updateCurrentCoastForTask(t)
 
 
 
