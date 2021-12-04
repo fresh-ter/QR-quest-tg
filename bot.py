@@ -158,7 +158,9 @@ def registrationClosed(tg_id):
 
 def start_for_parcipant(tg_id):
 	user = usersDB.getUserByTgId(tg_id)
-	p.sendMessage(user.tg_id, "Hello, "+user.getName()+"!")
+	message = "Hello, "+user.getName()+"!\n\n"
+	message += interlocutor.start_command["is_regitered"][0]
+	p.sendMessage(user.tg_id, message)
 
 
 def start_command(self):
@@ -249,6 +251,8 @@ def mecommand_for_parcipant(user):
 
 	message += interlocutor.me_command['task'][0]
 	message += str(solutionsDB.getNumberOfSolutionByUser(user))
+	message += interlocutor.me_command['task_1'][0]
+	message += str(tasksDB.getNumberOfAll())
 
 	message += interlocutor.me_command['task_2'][0]
 

@@ -137,6 +137,12 @@ class TasksDB:
 		task = self.getTaskById(ID)
 		return task
 
-	def function(self):
-		pass
+	def getNumberOfAll(self):
+		request = 'SELECT count(*) FROM ' + self.mainTableName
+
+		cursor = self.conn.cursor()
+		cursor.execute(request)
+		response = cursor.fetchone()
+
+		return response[0]
 
