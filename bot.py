@@ -9,6 +9,7 @@ from utils import UserStatuses, interlocutor
 # parcipantList = ["some_id"]
 
 p = Penger(token = tS.token)
+p.senderWhitelist.append("test")
 usersDB = None
 tasksDB = None
 solutionsDB = None
@@ -142,6 +143,7 @@ def registerNewUser(tg_id):
 	p.sendMessage(tg_id, "Registration...")
 	sleep(0.1)
 	user = usersDB.createAndAddNewUser(tg_id)
+	p.senderWhitelist.append(tg_id)
 
 	print(user.dumpToDict())
 
@@ -149,8 +151,6 @@ def registerNewUser(tg_id):
 	sleep(0.1)
 	user.changeStatus(UserStatuses.SENDS_NAME)
 	usersDB.updateUser(user)
-
-	# p.senderWhitelist.append(tg_id)
 
 
 def registrationClosed(tg_id):
@@ -216,29 +216,22 @@ def help_command(self):
 		p.sendMessageToChat(self.data, "This is help")
 
 
-def score_for_parcipant(user):
+def score_command(self):
+	tg_id = self.data["sender_id"]
+	user = usersDB.getUserByTgId(tg_id)
+
 	message = ''
 
 	message += interlocutor.me_command['score'][0]
 	message += str(user.getScore())
 
-	return message
+	p.sendMessageToChat(self.data, message)
 
 
-def score_command(self):
+def me_command(self):
 	tg_id = self.data["sender_id"]
 	user = usersDB.getUserByTgId(tg_id)
-	botAnswer = ''
 
-	if user is not None:
-		botAnswer = score_for_parcipant(user)
-	else:
-		botAnswer = 'I do not understand...'
-
-	p.sendMessageToChat(self.data, botAnswer)
-
-
-def mecommand_for_parcipant(user):
 	message = ''
 	
 	message += interlocutor.me_command['start'][0]
@@ -263,45 +256,24 @@ def mecommand_for_parcipant(user):
 	message += interlocutor.me_command['task_notok'][0]
 	message += str(solutionsDB.getNumberOfUnsolvedSolutionByUser(user))
 
-	return message
-
-
-
-def me_command(self):
-	tg_id = self.data["sender_id"]
-	user = usersDB.getUserByTgId(tg_id)
-	botAnswer = ''
-
-	if user is not None:
-		botAnswer = mecommand_for_parcipant(user)
-	else:
-		botAnswer = 'I do not understand...'
-
-	p.sendMessageToChat(self.data, botAnswer)
-
-
-def stats_for_parcipant():
-	message = ''
-
-	message += 'Statistics under construction...'
-
-	return message
+	p.sendMessageToChat(self.data, message)
 
 
 def stats_command(self):
 	tg_id = self.data["sender_id"]
 	user = usersDB.getUserByTgId(tg_id)
-	botAnswer = ''
 
-	if user is not None:
-		botAnswer = stats_for_parcipant()
-	else:
-		botAnswer = 'I do not understand...'
+	message = ''
 
-	p.sendMessageToChat(self.data, botAnswer)
+	message += 'Statistics under construction...'
+
+	p.sendMessageToChat(self.data, message)
 
 
-def task_for_parcipant(user):
+def task_command(self):
+	tg_id = self.data["sender_id"]
+	user = usersDB.getUserByTgId(tg_id)
+
 	message = ''
 
 	message = interlocutor.task_command["enter"][0]
@@ -309,21 +281,7 @@ def task_for_parcipant(user):
 	user.changeStatus(UserStatuses.SENDS_TASKID)
 	usersDB.updateUser(user)
 
-
-	return message
-
-
-def task_command(self):
-	tg_id = self.data["sender_id"]
-	user = usersDB.getUserByTgId(tg_id)
-	botAnswer = ''
-
-	if user is not None:
-		botAnswer = task_for_parcipant(user)
-	else:
-		botAnswer = 'I do not understand...'
-
-	p.sendMessageToChat(self.data, botAnswer)
+	p.sendMessageToChat(self.data, message)
 
 
 def empty_for_parcipant(user, message):
@@ -376,10 +334,10 @@ def empty(self):
 p.accordance = [
 	Accordance('/start', start_command, 'all:all', enableArgument=True),
 	Accordance('/help', help_command, 'all:all', enableArgument=True),
-	Accordance('/me', me_command, 'all:all', enableArgument=True),
-	Accordance('/score', score_command, 'all:all', enableArgument=True),
-	Accordance('/stats', stats_command, 'all:all', enableArgument=True),
-	Accordance('/task', task_command, 'all:all', enableArgument=True)
+	Accordance('/me', me_command, 'gWhitelist:all', enableArgument=True),
+	Accordance('/score', score_command, 'gWhitelist:all', enableArgument=True),
+	Accordance('/stats', stats_command, 'gWhitelist:all', enableArgument=True),
+	Accordance('/task', task_command, 'gWhitelist:all', enableArgument=True)
 ]
 p.emptyAccordance = Accordance('', empty, 'all:all', enableArgument=True)
 
