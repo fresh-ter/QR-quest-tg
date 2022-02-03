@@ -241,7 +241,8 @@ def me_command(self):
 
 	message += getUserStatusAsMessage(user)
 
-	message += score_for_parcipant(user)
+	message += interlocutor.me_command['score'][0]
+	message += str(user.getScore())
 
 	message += interlocutor.me_command['task'][0]
 	message += str(solutionsDB.getNumberOfSolutionByUser(user))
@@ -353,6 +354,7 @@ def main(u, t, s):
 	while True:
 		p.updateAndRespond()
 		sleep(10)
+		print("senderWhitelist:", p.senderWhitelist)
 
 
 # if __name__ == '__main__':
