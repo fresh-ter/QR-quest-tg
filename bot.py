@@ -164,6 +164,17 @@ def start_for_parcipant(tg_id):
 	p.sendMessage(user.tg_id, message)
 
 
+def start_pCommand(self):
+	tg_id = self.data["sender_id"]
+
+	print("This is public start")
+
+	if isRegistrationEnabled():
+		registerNewUser(tg_id)
+	else:
+		registrationClosed(tg_id)
+
+
 def start_command(self):
 	tg_id = self.data["sender_id"]
 	user = getUser(tg_id)
@@ -172,17 +183,11 @@ def start_command(self):
 	command_arr = self.data['text'].split()
 
 	if len(command_arr) == 1:
-		tg_id = self.data["sender_id"]
-
-		if user is None:
-			if isRegistrationEnabled():
-				registerNewUser(tg_id)
-			else:
-				registrationClosed(tg_id)
-		else:
-			start_for_parcipant(tg_id)
+		message = "Hello, "+user.getName()+"!\n\n"
+		message += interlocutor.start_command["is_regitered"][0]
+		p.sendMessage(user.tg_id, message)
 	else:
-		if command_arr[1][:4] == "task" and user is not None:
+		if command_arr[1][:4] == "task":
 			print("Parsing start message: ", command_arr[1])
 
 			taskID = interlocutor.getTaskIDFromStart(command_arr[1])
@@ -333,8 +338,11 @@ def empty(self):
 
 
 p.accordance = [
-	Accordance('/start', start_command, 'all:all', enableArgument=True),
-	Accordance('/help', help_command, 'all:all', enableArgument=True),
+	Accordance('/start', start_command, 'gWhitelist:all', enableArgument=True,
+		ifNotAuthorized = Accordance('/start', start_pCommand, "all:all",
+			enableArgument=True)
+		),
+	Accordance('/help', help_command, 'gWhitelist:all', enableArgument=True),
 	Accordance('/me', me_command, 'gWhitelist:all', enableArgument=True),
 	Accordance('/score', score_command, 'gWhitelist:all', enableArgument=True),
 	Accordance('/stats', stats_command, 'gWhitelist:all', enableArgument=True),
