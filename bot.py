@@ -2,6 +2,7 @@ from Penger.penger import Penger, Accordance
 import tgbotSettings as tS
 
 from time import sleep
+import logging
 
 from utils import UserStatuses, interlocutor
 
@@ -13,6 +14,21 @@ p.senderWhitelist.append("test")
 usersDB = None
 tasksDB = None
 solutionsDB = None
+
+#
+# Create a logger for the bot
+#
+
+formatter = logging.Formatter('[%(asctime)s]# %(levelname)-8s %(name)s: %(message)s')
+
+handler = logging.FileHandler("bot.log")
+handler.setFormatter(formatter)
+
+log = logging.getLogger("Bot")
+log.setLevel(logging.INFO)
+log.addHandler(handler)
+
+log.info('Hello!')
 
 
 def isParcipant(tg_id):
@@ -137,6 +153,8 @@ def taskIDEnter(text, user):
 
 
 def registerNewUser(tg_id):
+	log.info("Registering a new participant (tg-" + str(tg_id) + ")")
+
 	p.sendMessage(tg_id, interlocutor.registration['hello'][0])
 	sleep(0.1)
 
@@ -154,20 +172,22 @@ def registerNewUser(tg_id):
 
 
 def registrationClosed(tg_id):
+	log.warning("Registration is closed for tg-" + str(tg_id))
+
 	p.sendMessage(tg_id, "Hello!")
 
 
-def start_for_parcipant(tg_id):
-	user = usersDB.getUserByTgId(tg_id)
-	message = "Hello, "+user.getName()+"!\n\n"
-	message += interlocutor.start_command["is_regitered"][0]
-	p.sendMessage(user.tg_id, message)
+# def start_for_parcipant(tg_id):
+# 	user = usersDB.getUserByTgId(tg_id)
+# 	message = "Hello, "+user.getName()+"!\n\n"
+# 	message += interlocutor.start_command["is_regitered"][0]
+# 	p.sendMessage(user.tg_id, message)
 
 
 def start_pCommand(self):
 	tg_id = self.data["sender_id"]
 
-	print("This is public start")
+	log.info("Starting <start_p> for tg-" + str(tg_id))
 
 	if isRegistrationEnabled():
 		registerNewUser(tg_id)
@@ -178,11 +198,15 @@ def start_pCommand(self):
 def start_command(self):
 	tg_id = self.data["sender_id"]
 	user = getUser(tg_id)
-	print(self.data)
+
+	log.info("Starting <start> for user-" + str(user.getID()))
+	log.info("<start> ->> user-" + str(user.getID()) + " ->> " + str(self.data))
 
 	command_arr = self.data['text'].split()
 
 	if len(command_arr) == 1:
+		log.info("<start> ->> 'hello' for user-" + str(user.getID()))
+
 		message = "Hello, "+user.getName()+"!\n\n"
 		message += interlocutor.start_command["is_regitered"][0]
 		p.sendMessage(user.tg_id, message)
@@ -191,19 +215,26 @@ def start_command(self):
 			print("Parsing start message: ", command_arr[1])
 
 			taskID = interlocutor.getTaskIDFromStart(command_arr[1])
+
+			log.info("<start> ->> task-" + str(taskID) + " for user-" + str(user.getID()))
+
 			if taskID is None:
+				log.warning("<start> ->> Invalid task-" + str(taskID) + "; user-" + str(user.getID()))
 				p.sendMessage(tg_id, 'Error: Invalid link or parameter.')
 
 			task = tasksDB.getTaskById(taskID)
 			if task is None:
+				log.warning("<start> ->> task-" + str(taskID) + " not found; user-" + str(user.getID()))
 				p.sendMessage(tg_id, 'Ahaha, 404 Error: Task not found.')
 			else:
+				log.info("<start> ->> Send task-" + str(taskID) + " to user-" + str(user.getID()))
 				response = printTask(task, user)
 				p.sendMessage(tg_id, response)
 
 
 			# print("Task ID:", taskID)
 		else:
+			log.warning("<start> ->> Invalid parameter; user-" + str(user.getID()))
 			p.sendMessage(tg_id, 'I do not understand...')
 
 
@@ -237,6 +268,8 @@ def me_command(self):
 	tg_id = self.data["sender_id"]
 	user = usersDB.getUserByTgId(tg_id)
 
+	log.info("Starting <me> for user-" + str(user.getID()))
+
 	message = ''
 	
 	message += interlocutor.me_command['start'][0]
@@ -269,6 +302,8 @@ def stats_command(self):
 	tg_id = self.data["sender_id"]
 	user = usersDB.getUserByTgId(tg_id)
 
+	log.info("Starting <stats> for user-" + str(user.getID()))
+
 	message = ''
 
 	message += 'Statistics under construction...'
@@ -279,6 +314,8 @@ def stats_command(self):
 def task_command(self):
 	tg_id = self.data["sender_id"]
 	user = usersDB.getUserByTgId(tg_id)
+
+	log.info("Starting <task> for user-" + str(user.getID()))
 
 	message = ''
 
@@ -346,9 +383,13 @@ p.accordance = [
 	Accordance('/me', me_command, 'gWhitelist:all', enableArgument=True),
 	Accordance('/score', score_command, 'gWhitelist:all', enableArgument=True),
 	Accordance('/stats', stats_command, 'gWhitelist:all', enableArgument=True),
-	Accordance('/task', task_command, 'gWhitelist:all', enableArgument=True)
+	# Accordance('/task', task_command, 'gWhitelist:all', enableArgument=True)
 ]
 p.emptyAccordance = Accordance('', empty, 'all:all', enableArgument=True)
+
+print(type(p.accordance[0].ifNotAuthorized))
+print(type(p.accordance[0]))
+print(isinstance(p.accordance[0].ifNotAuthorized, Accordance))
 
 
 def main(u, t, s):
