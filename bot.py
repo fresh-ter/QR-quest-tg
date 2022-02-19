@@ -189,10 +189,11 @@ def start_pCommand(self):
 
 	log.info("Starting <start_p> for tg-" + str(tg_id))
 
-	if isRegistrationEnabled():
-		registerNewUser(tg_id)
-	else:
-		registrationClosed(tg_id)
+	if self.data['text'] == '/start':
+		if isRegistrationEnabled():
+			registerNewUser(tg_id)
+		else:
+			registrationClosed(tg_id)
 
 
 def start_command(self):
@@ -221,15 +222,15 @@ def start_command(self):
 			if taskID is None:
 				log.warning("<start> ->> Invalid task-" + str(taskID) + "; user-" + str(user.getID()))
 				p.sendMessage(tg_id, 'Error: Invalid link or parameter.')
-
-			task = tasksDB.getTaskById(taskID)
-			if task is None:
-				log.warning("<start> ->> task-" + str(taskID) + " not found; user-" + str(user.getID()))
-				p.sendMessage(tg_id, 'Ahaha, 404 Error: Task not found.')
 			else:
-				log.info("<start> ->> Send task-" + str(taskID) + " to user-" + str(user.getID()))
-				response = printTask(task, user)
-				p.sendMessage(tg_id, response)
+				task = tasksDB.getTaskById(taskID)
+				if task is None:
+					log.warning("<start> ->> task-" + str(taskID) + " not found; user-" + str(user.getID()))
+					p.sendMessage(tg_id, 'Ahaha, 404 Error: Task not found.')
+				else:
+					log.info("<start> ->> Send task-" + str(taskID) + " to user-" + str(user.getID()))
+					response = printTask(task, user)
+					p.sendMessage(tg_id, response)
 
 
 			# print("Task ID:", taskID)
@@ -238,23 +239,28 @@ def start_command(self):
 			p.sendMessage(tg_id, 'I do not understand...')
 
 
-def help_for_parcipant(user):
-	p.sendMessage(user.tg_id, interlocutor.help_text[0])
+def help_pCommand(self):
+	tg_id = self.data["sender_id"]
+
+	log.info("Starting <help_p> for tg-" + str(tg_id))
+
+	p.sendMessageToChat(self.data, "This is help")
 
 
 def help_command(self):
 	tg_id = self.data["sender_id"]
 	user = usersDB.getUserByTgId(tg_id)
 
-	if user is not None:
-		help_for_parcipant(user)
-	else:
-		p.sendMessageToChat(self.data, "This is help")
+	log.info("Starting <help> for user-" + str(user.getID()))
+
+	p.sendMessageToChat(self.data, interlocutor.help_text[0])
 
 
 def score_command(self):
 	tg_id = self.data["sender_id"]
 	user = usersDB.getUserByTgId(tg_id)
+
+	log.info("Starting <score> for user-" + str(user.getID()))
 
 	message = ''
 
@@ -327,49 +333,54 @@ def task_command(self):
 	p.sendMessageToChat(self.data, message)
 
 
-def empty_for_parcipant(user, message):
-	print(message)
-	userStatus = user.getStatus()
+def empty_P(self):
+	tg_id = self.data["sender_id"]
 
-	answer = "Status error.\nWrite to tech support - it's interesting."
+	log.info("Starting <_empty_p> for tg-" + str(tg_id))
 
-	if userStatus == UserStatuses.READY:
-		answer = interlocutor.others["ready"][0]
+	botAnswer = 'I do not understand...'
 
-	elif userStatus == UserStatuses.SENDS_NAME:
-		user.changeName(interlocutor.get_validated_name(message))
-		user.changeStatus(UserStatuses.READY)
-		usersDB.updateUser(user)
-		answer = interlocutor.others["sends_name"][0]
-
-	elif userStatus == UserStatuses.SENDS_ANSWER:
-		if message.replace(" ", '').lower() == interlocutor.stop_word:
-			answer = answer_stop(user)
-		else:
-			message = interlocutor.get_validated_answer(message)
-			answer = processUserAnswer(message, user)
-
-	elif userStatus == UserStatuses.SENDS_TASKID:
-		answer = taskIDEnter(message, user)
-
-	return answer
-		
+	p.sendMessageToChat(self.data, botAnswer)
 
 
 def empty(self):
 	tg_id = self.data["sender_id"]
 	user = usersDB.getUserByTgId(tg_id)
-	text = self.data['text']
-	botAnswer = ''
 
-	if user is not None:
-		botAnswer = "This is <empty> for parcipant."
+	log.info("Starting <_empty> for user-" + str(user.getID()))
 
-		if len(text) > 0:
-			if text[0] != "/":
-				botAnswer = empty_for_parcipant(user, text)
-	else:
-		botAnswer = 'I do not understand...'
+	message = self.data['text']
+
+	botAnswer = "This is <empty> for parcipant."
+
+	if len(message) > 0:
+		if message[0] != "/":
+
+			print(message)
+			userStatus = user.getStatus()
+
+			answer = "Status error.\nWrite to tech support - it's interesting."
+
+			if userStatus == UserStatuses.READY:
+				answer = interlocutor.others["ready"][0]
+
+			elif userStatus == UserStatuses.SENDS_NAME:
+				user.changeName(interlocutor.get_validated_name(message))
+				user.changeStatus(UserStatuses.READY)
+				usersDB.updateUser(user)
+				answer = interlocutor.others["sends_name"][0]
+
+			elif userStatus == UserStatuses.SENDS_ANSWER:
+				if message.replace(" ", '').lower() == interlocutor.stop_word:
+					answer = answer_stop(user)
+				else:
+					message = interlocutor.get_validated_answer(message)
+					answer = processUserAnswer(message, user)
+
+			elif userStatus == UserStatuses.SENDS_TASKID:
+				answer = taskIDEnter(message, user)
+
+			botAnswer = answer
 
 	p.sendMessageToChat(self.data, botAnswer)
 
@@ -379,17 +390,23 @@ p.accordance = [
 		ifNotAuthorized = Accordance('/start', start_pCommand, "all:all",
 			enableArgument=True)
 		),
-	Accordance('/help', help_command, 'gWhitelist:all', enableArgument=True),
+	Accordance('/help', help_command, 'gWhitelist:all', enableArgument=True,
+		ifNotAuthorized = Accordance('/help', help_pCommand, "all:all",
+			enableArgument=True)
+		),
 	Accordance('/me', me_command, 'gWhitelist:all', enableArgument=True),
 	Accordance('/score', score_command, 'gWhitelist:all', enableArgument=True),
 	Accordance('/stats', stats_command, 'gWhitelist:all', enableArgument=True),
 	# Accordance('/task', task_command, 'gWhitelist:all', enableArgument=True)
 ]
-p.emptyAccordance = Accordance('', empty, 'all:all', enableArgument=True)
 
-print(type(p.accordance[0].ifNotAuthorized))
-print(type(p.accordance[0]))
-print(isinstance(p.accordance[0].ifNotAuthorized, Accordance))
+p.emptyAccordance = Accordance('', empty, 'gWhitelist:all', enableArgument=True,
+	ifNotAuthorized = Accordance('', empty_P, "all:all", enableArgument=True)
+	)
+
+# print(type(p.accordance[0].ifNotAuthorized))
+# print(type(p.accordance[0]))
+# print(isinstance(p.accordance[0].ifNotAuthorized, Accordance))
 
 
 def main(u, t, s):
@@ -399,6 +416,17 @@ def main(u, t, s):
 	usersDB = u
 	tasksDB = t
 	solutionsDB = s
+
+	l = []
+	for x in range(1, usersDB.getLastID()+1):
+		_id = usersDB.getUserById(x).getTgID()
+		l.append(int(_id))
+
+	print(l)
+	import sys
+	print(sys.getsizeof(l))
+
+	p.senderWhitelist.extend(l)
 
 	while True:
 		p.updateAndRespond()
