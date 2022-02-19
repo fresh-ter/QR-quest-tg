@@ -312,9 +312,26 @@ def stats_command(self):
 
 	message = ''
 
-	message += 'Statistics under construction...'
+	message = "TOP-5 BY SCORE\n\n"
+	message += "=========\n\n"
+
+	a = usersDB.top10byScoreDict()
+	print(a)
+
+	if a is None:
+		message += "There are no participants."
+	else:
+		for x in a.keys():
+			u = usersDB.getUserById(x)
+			message += u.getName() + ' ---> ' + str(a[x]) + '\n\n'
 
 	p.sendMessageToChat(self.data, message)
+	sleep(0.1)
+
+	message = "TOP-5 BY CORRECT DECISIONS\n\n"
+	message += "=========\n\n"
+
+
 
 
 def task_command(self):
