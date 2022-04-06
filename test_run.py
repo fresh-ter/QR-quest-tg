@@ -29,16 +29,16 @@ def main():
 	# create_test_users(usersDB)
 	# create_test_tasks(tasksDB)
 
-	a = usersDB.getLastID()
-	print(a)
+	# a = usersDB.getLastID()
+	# print(a)
 
-	a = usersDB.getUserByTgId("123")
+	# a = usersDB.getUserByTgId("123")
 
-	a.addPoints(50)
-	a.fname = 'Eliot'
-	a.changeName('eliot')
-	a.changeStatus(21)
-	usersDB.updateUser(a)
+	# a.addPoints(50)
+	# a.fname = 'Eliot'
+	# a.changeName('eliot')
+	# a.changeStatus(21)
+	# usersDB.updateUser(a)
 
 	# if a is not None:
 	# 	print(a.dumpToDict())
@@ -72,18 +72,38 @@ def main():
 
 	# print(a.dumpToDict())
 
-	t = tasksDB.getTaskById(4)
-	print(t.getCurrentCoast())
-	t.min_coast = 960
-	t.updateCurrentCoast()
-	t.updateCurrentCoast()
-	t.updateCurrentCoast()
-	t.updateCurrentCoast()
-	t.updateCurrentCoast()
-	t.updateCurrentCoast()
-	t.updateCurrentCoast()
-	print(t.getCurrentCoast())
+	# t = tasksDB.getTaskById(4)
+	# print(t.getCurrentCoast())
+	# t.min_coast = 960
+	# t.updateCurrentCoast()
+	# t.updateCurrentCoast()
+	# t.updateCurrentCoast()
+	# t.updateCurrentCoast()
+	# t.updateCurrentCoast()
+	# t.updateCurrentCoast()
+	# t.updateCurrentCoast()
+	# print(t.getCurrentCoast())
 	# tasksDB.updateCurrentCoastForTask(t)
+
+	a = usersDB.getUserById("5")
+	t = tasksDB.getTaskById(4)
+
+	print(a.dumpToDict())
+
+	x = solutionsDB.getNumberOfSolutionByUser(a)
+
+	print("getNumberOfSolutionByUser", x)
+	print("getNumberOfSolvedSolutionByUser", solutionsDB.getNumberOfSolvedSolutionByUser(a))
+	print("getNumberOfUnsolvedSolutionByUser", solutionsDB.getNumberOfUnsolvedSolutionByUser(a))
+
+	print()
+
+	for x in range(11):
+		t = tasksDB.getTaskById(x+1)
+		print(x+1, " | ", solutionsDB.isSolvedTaskByUser(a, t))
+
+	
+
 
 
 
