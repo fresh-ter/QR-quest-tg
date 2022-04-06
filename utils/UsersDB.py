@@ -185,3 +185,23 @@ class UsersDB:
 
 		if existingUser.status != user.status:
 			self._updateValue(userID, 'status', user.status)
+
+	def top10byScoreDict(self):
+		request = 'SELECT id, score FROM ' + self.mainTableName + ' ORDER BY score DESC LIMIT 5'
+
+		cursor = self.conn.cursor()
+		cursor.execute(request)
+		response = cursor.fetchall()
+
+		print(response)
+
+		if len(response) == 0:
+			return None
+		else:
+			d = {}
+
+			# id: score
+			for x in response:
+				d[x[0]] = x[1]
+
+			return d

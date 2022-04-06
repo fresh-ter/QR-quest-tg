@@ -31,6 +31,9 @@ class User:
 	def getID(self):
 		return self.ID
 
+	def getTgID(self):
+		return self.tg_id
+
 	def dumpToDict(self):
 		d = {}
 

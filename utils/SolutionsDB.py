@@ -149,3 +149,14 @@ class SolutionsDB:
 		numberOfSolutions = self.getNumberOfSolutionBy(request, (user.getID(),))
 
 		return numberOfSolutions
+
+	def isSolvedTaskByUser(self, user, task):
+		response = False
+
+		request = 'SELECT count(*) FROM solutions WHERE user_id=? AND task_id=? AND is_solved=1'
+		numberOfSolutions = self.getNumberOfSolutionBy(request, (user.getID(), task.getID()))
+
+		if numberOfSolutions > 0:
+			response = True
+
+		return response
