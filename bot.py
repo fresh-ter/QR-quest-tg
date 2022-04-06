@@ -74,7 +74,7 @@ def printTask(task, user):
 
 	# print('solutions', solutionsDB.isThereSolution(user, task))
 
-	if not solutionsDB.isThereSolution(user, task):
+	if not solutionsDB.isSolvedTaskByUser(user, task):
 		message += task.getTaskAsMessage()
 
 		user.changeStatus(UserStatuses.SENDS_ANSWER)
