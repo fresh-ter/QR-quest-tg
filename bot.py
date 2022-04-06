@@ -289,17 +289,17 @@ def me_command(self):
 	message += str(user.getScore())
 
 	message += interlocutor.me_command['task'][0]
-	message += str(solutionsDB.getNumberOfSolutionByUser(user))
+	message += str(solutionsDB.getNumberOfSolvedSolutionByUser(user))
 	message += interlocutor.me_command['task_1'][0]
 	message += str(tasksDB.getNumberOfAll())
 
-	message += interlocutor.me_command['task_2'][0]
+	# message += interlocutor.me_command['task_2'][0]
 
-	message += interlocutor.me_command['task_ok'][0]
-	message += str(solutionsDB.getNumberOfSolvedSolutionByUser(user))
+	# message += interlocutor.me_command['task_ok'][0]
+	# message += str(solutionsDB.getNumberOfSolvedSolutionByUser(user))
 
-	message += interlocutor.me_command['task_notok'][0]
-	message += str(solutionsDB.getNumberOfUnsolvedSolutionByUser(user))
+	# message += interlocutor.me_command['task_notok'][0]
+	# message += str(solutionsDB.getNumberOfUnsolvedSolutionByUser(user))
 
 	p.sendMessageToChat(self.data, message)
 
